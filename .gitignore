@@ -1,0 +1,15 @@
+# Emacs
+\#*\#
+\#*
+*~
+
+# Python
+*.pyc
+*.spec
+build
+dist
+get-pip.py
+
+# Build
+rancher-installer
+rancher-installer-*
