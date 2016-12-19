@@ -23,7 +23,7 @@ def get_defaults():
     return {
         'email': 'email@example.com',
         'rancher_domain': 'cloud.yourdomain.com',
-        'duplicity_target_url': 'imabucket/backup',
+        'duplicity_target_url': 'gs://your-bucket/backup',
         'gs_access_key_id': 'gs-access-key-id',
         'gs_secret_access_key': 'gs-secret-access-key',
         'cron_schedule': '0 0 0 * * *',
