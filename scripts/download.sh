@@ -15,10 +15,8 @@ if [ "$(echo $DISTRO | awk '{print substr($0,0,6)}')" == "centos" ]; then
 fi
 if [ "$DISTRO" == "Ubuntu" ]; then
     curl -L https://github.com/jamrizzi/rancher-installer/releases/download/v0.0.1/rancher-installer-ubuntu.tar.gz | tar zxv
-    sleep 5s
-    ./rancher-installer
+    sudo ./rancher-installer
 elif [ "$DISTRO" == "centos" ]; then
     curl -L https://github.com/jamrizzi/rancher-installer/releases/download/v0.0.1/rancher-installer-centos.tar.gz | tar zxv
-    sleep 5s
-    ./rancher-installer
+    sudo ./rancher-installer
 fi
