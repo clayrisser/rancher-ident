@@ -65,7 +65,12 @@ def create_volumes_dir(options):
         os.system('mount -a && mount')
 
 def install_docker():
-	os.system('curl -L https://get.docker.com/ | bash')
+	os.system('''
+    curl -L https://get.docker.com/ | bash
+    service docker start
+    service docker status
+    docker run hello-world
+    ''')
 
 def restore_volumes(options):
     os.system('''
