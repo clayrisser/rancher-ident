@@ -83,4 +83,5 @@ fetch_docker:
 ifeq ($(shell whereis docker), $(shell echo docker:))
 	curl -L https://get.docker.com/ | bash
 endif
+	docker run hello-world
 	$(info fetched docker)
