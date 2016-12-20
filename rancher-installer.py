@@ -67,6 +67,7 @@ def create_volumes_dir(options):
 def install_docker():
 	os.system('''
     curl -L https://get.docker.com/ | bash
+    service docker start
     docker run hello-world
     ''')
 
