@@ -13,11 +13,11 @@ def main():
     helper.prepare()
     create_volumes_dir(options)
     install_docker()
-    restore_volumes(options)
+#    restore_volumes(options)
     install_nginx(options)
     install_mariadb(options)
     install_rancher(options)
-    install_dockplicity(options)
+#    install_dockplicity(options)
 
 def get_defaults():
     return {
