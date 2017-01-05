@@ -105,7 +105,7 @@ def install_rancher(options):
     -e VIRTUAL_PORT=8080 \
     -e LETSENCRYPT_HOST=''' + options['rancher_domain'] + ''' \
     -e LETSENCRYPT_EMAIL=''' + options['email'] + ''' \
-    rancher/server:latest
+    rancher/server:latest \
     --db-host mysql \
     --db-port 3306 \
     --db-user root \
