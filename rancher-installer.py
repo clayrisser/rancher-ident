@@ -13,11 +13,11 @@ def main():
     helper.prepare()
     create_volumes_dir(options)
     install_docker()
-#    restore_volumes(options)
     install_nginx(options)
     install_mariadb(options)
     install_rancher(options)
-#    install_dockplicity(options)
+    restore_volumes(options)
+    install_dockplicity(options)
 
 def get_defaults():
     return {
@@ -71,19 +71,6 @@ def install_docker():
     docker run hello-world
     ''')
 
-def restore_volumes(options):
-    os.system('''
-    docker run --rm \
-    -v ''' + options['volumes_directory'] + '''/certs:/volumes/certs \
-    -v ''' + options['volumes_directory'] + '''/rancher-data:/volumes/mysql \
-    -e GS_ACCESS_KEY_ID=''' + options['gs_access_key_id'] + ''' \
-    -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + ''' \
-    -e TARGET_URL=''' + options['duplicity_target_url'] + ''' \
-    -e ACTION=restore \
-    -e FORCE=true \
-    jamrizzi/dockplicity:latest
-    ''')
-
 def install_nginx(options):
     os.system('''
     docker run -d --name nginx --restart=always -p 80:80 -p 443:443 \
@@ -95,6 +82,7 @@ def install_nginx(options):
     jwilder/nginx-proxy
     docker run -d --restart=unless-stopped \
     -v ''' + options['volumes_directory'] + '''/certs:/etc/nginx/certs:rw \
+    --label dockplicity=true \
     --volumes-from nginx-proxy \
     -v /var/run/docker.sock:/var/run/docker.sock:ro \
     alastaircoote/docker-letsencrypt-nginx-proxy-companion:latest
@@ -106,29 +94,43 @@ def install_mariadb(options):
     -v ''' + options['volumes_directory'] + '''/rancher-data:/var/lib/mysql \
     -e MYSQL_DATABASE=''' + options['rancher_mysql_database'] + ''' \
     -e MYSQL_ROOT_PASSWORD=''' + options['mysql_root_password'] + ''' \
+    --label dockplicity=true \
     mariadb:latest
     ''')
 
 def install_rancher(options):
     os.system('''
     docker run -d --name rancher --restart=unless-stopped --link rancherdb:mysql \
-    -e CATTLE_DB_CATTLE_MYSQL_HOST=mysql \
-    -e CATTLE_DB_CATTLE_MYSQL_PORT=3306 \
-    -e CATTLE_DB_CATTLE_MYSQL_NAME=''' + options['rancher_mysql_database'] + ''' \
-    -e CATTLE_DB_CATTLE_USERNAME=root \
-    -e CATTLE_DB_CATTLE_PASSWORD=''' + options['mysql_root_password'] + ''' \
     -e VIRTUAL_HOST=''' + options['rancher_domain'] + ''' \
     -e VIRTUAL_PORT=8080 \
     -e LETSENCRYPT_HOST=''' + options['rancher_domain'] + ''' \
     -e LETSENCRYPT_EMAIL=''' + options['email'] + ''' \
     rancher/server:latest
+    --db-host mysql \
+    --db-port 3306 \
+    --db-user root \
+    --db-pass ''' + options['mysql_root_password'] + ''' \
+    --db-name ''' + options['rancher_mysql_database'] + '''
+    ''')
+
+def restore_volumes(options):
+    os.system('''
+    docker run --rm \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -e GS_ACCESS_KEY_ID=''' + options['gs_access_key_id'] + ''' \
+    -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + ''' \
+    -e TARGET_URL=''' + options['duplicity_target_url'] + ''' \
+    -e ALLOW_SOURCE_MISMATCH=''' + options['allow_source_mismatch'] + ''' \
+    -e COMMAND=restore \
+    -e RESTORE_ALL=true \
+    -e FORCE=true \
+    jamrizzi/dockplicity:latest
     ''')
 
 def install_dockplicity(options):
     os.system('''
     docker run -d --name dockplicity --restart=always \
-    -v $VOLUMES_DIRECTORY/certs:/volumes/certs \
-    -v $VOLUMES_DIRECTORY/rancher-data:/volumes/rancher-data \
+    -v /var/run/docker.sock:/var/run/docker.sock \
     -e GS_ACCESS_KEY_ID=''' + options['gs_access_key_id'] + ''' \
     -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + '''] \
     -e TARGET_URL=''' + options['duplicity_target_url'] + ''' \
