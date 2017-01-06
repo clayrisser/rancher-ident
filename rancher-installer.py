@@ -27,7 +27,6 @@ def get_defaults():
         'gs_access_key_id': 'gs-access-key-id',
         'gs_secret_access_key': 'gs-secret-access-key',
         'cron_schedule': '0 0 0 * * *',
-        'allow_source_mismatch': 'false',
         'volumes_directory': '/volumes',
         'volumes_mount': 'local',
         'rancher_mysql_database': 'rancher',
@@ -42,7 +41,6 @@ def gather_information(defaults):
     options['gs_access_key_id'] = default_prompt('Google Storage Access Key ID', defaults['gs_access_key_id'])
     options['gs_secret_access_key'] = default_prompt('Google Storage Secret Access Key', defaults['gs_secret_access_key'])
     options['cron_schedule'] = default_prompt('Cron Schedule', defaults['cron_schedule'])
-    options['allow_source_mismatch'] = default_prompt('Allow Source Mismatch', defaults['allow_source_mismatch'])
     options['volumes_directory'] = default_prompt('Volumes Directory', defaults['volumes_directory'])
     options['volumes_mount'] = default_prompt('Volumes Mount', defaults['volumes_mount'])
     options['rancher_mysql_database'] = default_prompt('Rancher Mysql Database', defaults['rancher_mysql_database'])
@@ -80,7 +78,7 @@ def install_nginx(options):
     -v /usr/share/nginx/html \
     -v /var/run/docker.sock:/tmp/docker.sock:ro \
     jwilder/nginx-proxy
-    docker run -d --restart=unless-stopped \
+    docker run -d --name letsencrypt --restart=unless-stopped \
     -v ''' + options['volumes_directory'] + '''/certs:/etc/nginx/certs:rw \
     --label dockplicity=true \
     --volumes-from nginx-proxy \
@@ -120,7 +118,6 @@ def restore_volumes(options):
     -e GS_ACCESS_KEY_ID=''' + options['gs_access_key_id'] + ''' \
     -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + ''' \
     -e TARGET_URL=''' + options['duplicity_target_url'] + ''' \
-    -e ALLOW_SOURCE_MISMATCH=''' + options['allow_source_mismatch'] + ''' \
     -e COMMAND=restore \
     -e RESTORE_ALL=true \
     -e FORCE=true \
@@ -135,7 +132,6 @@ def install_dockplicity(options):
     -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + '''] \
     -e TARGET_URL=''' + options['duplicity_target_url'] + ''' \
     -e CRON_SCHEDULE="''' + options['cron_schedule'] + '''" \
-    -e ALLOW_SOURCE_MISMATCH=''' + options['allow_source_mismatch'] + ''' \
     jamrizzi/dockplicity:latest
     ''')
 
