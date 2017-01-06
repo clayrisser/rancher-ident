@@ -129,7 +129,7 @@ def install_dockplicity(options):
     docker run -d --name dockplicity --restart=always \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e GS_ACCESS_KEY_ID=''' + options['gs_access_key_id'] + ''' \
-    -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + '''] \
+    -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + ''' \
     -e TARGET_URL=''' + options['duplicity_target_url'] + ''' \
     -e CRON_SCHEDULE="''' + options['cron_schedule'] + '''" \
     jamrizzi/dockplicity:latest
