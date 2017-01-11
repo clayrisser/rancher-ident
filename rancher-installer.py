@@ -23,9 +23,10 @@ def get_defaults():
     return {
         'email': 'email@example.com',
         'rancher_domain': 'cloud.yourdomain.com',
-        'duplicity_target_url': 'gs://your-bucket/backup',
-        'gs_access_key_id': 'gs-access-key-id',
-        'gs_secret_access_key': 'gs-secret-access-key',
+        'backup_storage_target_url': '',
+        'backup_storage_access_key': '',
+        'backup_storage_secret_key': '',
+	'backup_storage_volume': '/backup',
         'cron_schedule': '0 0 0 * * *',
         'volumes_directory': '/volumes',
         'volumes_mount': 'local',
@@ -37,9 +38,10 @@ def gather_information(defaults):
     options = {}
     options['email'] = default_prompt('Email', defaults['email'])
     options['rancher_domain'] = default_prompt('Rancher Domain', defaults['rancher_domain'])
-    options['duplicity_target_url'] = default_prompt('Duplicity Target URL', defaults['duplicity_target_url'])
-    options['gs_access_key_id'] = default_prompt('Google Storage Access Key ID', defaults['gs_access_key_id'])
-    options['gs_secret_access_key'] = default_prompt('Google Storage Secret Access Key', defaults['gs_secret_access_key'])
+    options['backup_storage_volume'] = default_prompt('Backup Storage Volume', defaults['backup_storage_volume'])
+    options['backup_storage_target_url'] = default_prompt('Backup Storage Target URL', defaults['backup_storage_target_url'])
+    options['backup_storage_access_key'] = default_prompt('Backup Storage Access Key', defaults['backup_storage_access_key'])
+    options['backup_storage_secret_key'] = default_prompt('Backup Storage Secret Key', defaults['backup_storage_secret_key'])
     options['cron_schedule'] = default_prompt('Cron Schedule', defaults['cron_schedule'])
     options['volumes_directory'] = default_prompt('Volumes Directory', defaults['volumes_directory'])
     options['volumes_mount'] = default_prompt('Volumes Mount', defaults['volumes_mount'])
@@ -115,22 +117,22 @@ def restore_volumes(options):
     os.system('''
     docker run --rm \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -e GS_ACCESS_KEY_ID=''' + options['gs_access_key_id'] + ''' \
-    -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + ''' \
-    -e TARGET_URL=''' + options['duplicity_target_url'] + ''' \
-    -e COMMAND=restore \
+    ''' + (('-v ' + options['storage_volume'] + ':/borg') if options['storage_volume'] != '' else '') + ''' \
+    -e STORAGE_ACCESS_KEY=''' + options['backup_storage_access_key'] + ''' \
+    -e STORAGE_SECRET_KEY=''' + options['backup_storage_secret_key'] + ''' \
+    -e STORAGE_TARGET_URL=''' + options['backup_storage_target_url'] + ''' \
     -e RESTORE_ALL=true \
-    -e FORCE=true \
-    jamrizzi/dockplicity:latest
+    jamrizzi/dockplicity:latest restore
     ''')
 
 def install_dockplicity(options):
     os.system('''
     docker run -d --name dockplicity --restart=always \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -e GS_ACCESS_KEY_ID=''' + options['gs_access_key_id'] + ''' \
-    -e GS_SECRET_ACCESS_KEY=''' + options['gs_secret_access_key'] + ''' \
-    -e TARGET_URL=''' + options['duplicity_target_url'] + ''' \
+    ''' + (('-v ' + options['storage_volume'] + ':/borg') if options['storage_volume'] != '' else '') + ''' \
+    -e STORAGE_ACCESS_KEY=''' + options['backup_storage_access_key'] + ''' \
+    -e STORAGE_SECRET_KEY=''' + options['backup_storage_secret_key'] + ''' \
+    -e STORAGE_TARGET_URL=''' + options['backup_storage_target_url'] + ''' \
     -e CRON_SCHEDULE="''' + options['cron_schedule'] + '''" \
     jamrizzi/dockplicity:latest
     ''')
