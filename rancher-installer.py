@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import time
 import os
 import platform
 from builtins import input
@@ -26,7 +27,7 @@ def get_defaults():
         'backup_storage_target_url': '',
         'backup_storage_access_key': '',
         'backup_storage_secret_key': '',
-	'backup_storage_volume': '/backup',
+	    'backup_storage_volume': '/backup',
         'cron_schedule': '0 0 0 * * *',
         'volumes_directory': '/volumes',
         'volumes_mount': 'local',
@@ -114,10 +115,12 @@ def install_rancher(options):
     ''')
 
 def restore_volumes(options):
+    print('Waiting a minute for everything to start up . . .')
+    time.sleep(60)
     os.system('''
     docker run --rm \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    ''' + (('-v ' + options['storage_volume'] + ':/borg') if options['storage_volume'] != '' else '') + ''' \
+    ''' + (('-v ' + options['backup_storage_volume'] + ':/borg') if options['backup_storage_volume'] != '' else '') + ''' \
     -e STORAGE_ACCESS_KEY=''' + options['backup_storage_access_key'] + ''' \
     -e STORAGE_SECRET_KEY=''' + options['backup_storage_secret_key'] + ''' \
     -e STORAGE_TARGET_URL=''' + options['backup_storage_target_url'] + ''' \
@@ -129,7 +132,7 @@ def install_dockplicity(options):
     os.system('''
     docker run -d --name dockplicity --restart=always \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    ''' + (('-v ' + options['storage_volume'] + ':/borg') if options['storage_volume'] != '' else '') + ''' \
+    ''' + (('-v ' + options['backup_storage_volume'] + ':/borg') if options['backup_storage_volume'] != '' else '') + ''' \
     -e STORAGE_ACCESS_KEY=''' + options['backup_storage_access_key'] + ''' \
     -e STORAGE_SECRET_KEY=''' + options['backup_storage_secret_key'] + ''' \
     -e STORAGE_TARGET_URL=''' + options['backup_storage_target_url'] + ''' \
