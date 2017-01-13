@@ -13,31 +13,31 @@ build_from_docker:
 	$(info built from docker)
 
 .PHONY: build_centos
-build_centos: fetch_dependancies build rancher-installer-centos.tar.gz sweep
+build_centos: fetch_dependancies build rancher-ident-centos.tar.gz sweep
 	$(info built for centos)
 
 .PHONY: build_ubuntu
-build_ubuntu: fetch_dependancies build rancher-installer-ubuntu.tar.gz sweep
+build_ubuntu: fetch_dependancies build rancher-ident-ubuntu.tar.gz sweep
 	$(info built for ubuntu)
 
 .PHONY: build
-build: dist/rancher-installer
+build: dist/rancher-ident
 	$(info built)
 
-dist/rancher-installer:
-	pyinstaller --onefile --noupx rancher-installer.py
+dist/rancher-ident:
+	pyinstaller --onefile --noupx rancher-ident.py
 
 
 ## PACKAGE ##
-rancher-installer-centos.tar.gz:
-	@cp dist/rancher-installer ./
-	@tar -zcvf rancher-installer-centos.tar.gz rancher-installer
-	@rm -f rancher-installer
+rancher-ident-centos.tar.gz:
+	@cp dist/rancher-ident ./
+	@tar -zcvf rancher-ident-centos.tar.gz rancher-ident
+	@rm -f rancher-ident
 
-rancher-installer-ubuntu.tar.gz:
-	@cp dist/rancher-installer ./
-	@tar -zcvf rancher-installer-ubuntu.tar.gz rancher-installer
-	@rm -f rancher-installer
+rancher-ident-ubuntu.tar.gz:
+	@cp dist/rancher-ident ./
+	@tar -zcvf rancher-ident-ubuntu.tar.gz rancher-ident
+	@rm -f rancher-ident
 
 
 ## CLEAN ##
@@ -52,7 +52,7 @@ sweep:
 
 .PHONY: bleach
 bleach:
-	@rm -rf rancher-installer rancher-installer-*
+	@rm -rf rancher-ident rancher-ident-*
 	$(info bleached)
 
 

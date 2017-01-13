@@ -1,7 +1,7 @@
-# rancher-installer
+# rancher-ident
 Simple, persistent, and reliable, installer for rancher
 
 ## Installation
 ```
-curl -L https://raw.githubusercontent.com/jamrizzi/rancher-installer/master/scripts/download.sh | bash && sudo ./rancher-installer
+curl -L https://raw.githubusercontent.com/jamrizzi/rancher-ident/master/scripts/download.sh | bash && sudo ./rancher-ident
 ```
