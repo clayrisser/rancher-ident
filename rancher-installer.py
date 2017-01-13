@@ -18,7 +18,7 @@ def main():
     install_mariadb(options)
     install_rancher(options)
     restore_volumes(options)
-    install_dockplicity(options)
+    install_ident(options)
 
 def get_defaults():
     return {
@@ -83,7 +83,7 @@ def install_nginx(options):
     jwilder/nginx-proxy
     docker run -d --name letsencrypt --restart=unless-stopped \
     -v ''' + options['volumes_directory'] + '''/certs:/etc/nginx/certs:rw \
-    --label dockplicity=true \
+    --label ident=true \
     --volumes-from nginx-proxy \
     -v /var/run/docker.sock:/var/run/docker.sock:ro \
     alastaircoote/docker-letsencrypt-nginx-proxy-companion:latest
@@ -95,7 +95,7 @@ def install_mariadb(options):
     -v ''' + options['volumes_directory'] + '''/rancher-data:/var/lib/mysql \
     -e MYSQL_DATABASE=''' + options['rancher_mysql_database'] + ''' \
     -e MYSQL_ROOT_PASSWORD=''' + options['mysql_root_password'] + ''' \
-    --label dockplicity=true \
+    --label ident=true \
     mariadb:latest
     ''')
 
@@ -125,19 +125,19 @@ def restore_volumes(options):
     -e STORAGE_SECRET_KEY=''' + options['backup_storage_secret_key'] + ''' \
     -e STORAGE_TARGET_URL=''' + options['backup_storage_target_url'] + ''' \
     -e RESTORE_ALL=true \
-    jamrizzi/dockplicity:latest restore
+    jamrizzi/ident:latest restore
     ''')
 
-def install_dockplicity(options):
+def install_ident(options):
     os.system('''
-    docker run -d --name dockplicity --restart=always \
+    docker run -d --name ident --restart=always \
     -v /var/run/docker.sock:/var/run/docker.sock \
     ''' + (('-v ' + options['backup_storage_volume'] + ':/borg') if options['backup_storage_volume'] != '' else '') + ''' \
     -e STORAGE_ACCESS_KEY=''' + options['backup_storage_access_key'] + ''' \
     -e STORAGE_SECRET_KEY=''' + options['backup_storage_secret_key'] + ''' \
     -e STORAGE_TARGET_URL=''' + options['backup_storage_target_url'] + ''' \
     -e CRON_SCHEDULE="''' + options['cron_schedule'] + '''" \
-    jamrizzi/dockplicity:latest
+    jamrizzi/ident:latest
     ''')
 
 main()
