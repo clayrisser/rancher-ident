@@ -29,7 +29,6 @@ def get_defaults():
         'backup_storage_secret_key': '',
 	    'backup_storage_volume': '/backup',
         'cron_schedule': '0 0 0 * * *',
-        'volumes_directory': '/volumes',
         'volumes_mount': 'local',
         'rancher_mysql_database': 'rancher',
         'mysql_root_password': 'hellodocker'
@@ -44,7 +43,6 @@ def gather_information(defaults):
     options['backup_storage_access_key'] = default_prompt('Backup Storage Access Key', defaults['backup_storage_access_key'])
     options['backup_storage_secret_key'] = default_prompt('Backup Storage Secret Key', defaults['backup_storage_secret_key'])
     options['cron_schedule'] = default_prompt('Cron Schedule', defaults['cron_schedule'])
-    options['volumes_directory'] = default_prompt('Volumes Directory', defaults['volumes_directory'])
     options['volumes_mount'] = default_prompt('Volumes Mount', defaults['volumes_mount'])
     options['rancher_mysql_database'] = default_prompt('Rancher Mysql Database', defaults['rancher_mysql_database'])
     options['mysql_root_password'] = default_prompt('MYSQL Root Password', defaults['mysql_root_password'])
@@ -59,10 +57,10 @@ def default_prompt(name, fallback):
         return fallback
 
 def create_volumes_dir(options):
-    os.system('mkdir -p ' + options['volumes_directory'])
+    os.system('mkdir -p /volumes')
     if os.system(options['volumes_mount']):
         os.system('mkfs.xfs -i size=512 ' + options['volumes_mount'])
-        os.system('echo ' + options['volumes_mount'] + options['volumes_directory'] + ' xfs defaults 1 2" >> /etc/fstab')
+        os.system('echo "' + options['volumes_mount'] + ' /volumes xfs defaults 1 2" >> /etc/fstab')
         os.system('mount -a && mount')
 
 def install_docker():
@@ -76,13 +74,13 @@ def install_nginx(options):
     os.system('''
     docker run -d --name nginx --restart=always -p 80:80 -p 443:443 \
     --name nginx-proxy \
-    -v ''' + options['volumes_directory'] + '''/certs:/etc/nginx/certs:ro \
+    -v /volumes/certs:/etc/nginx/certs:ro \
     -v /etc/nginx/vhost.d \
     -v /usr/share/nginx/html \
     -v /var/run/docker.sock:/tmp/docker.sock:ro \
     jwilder/nginx-proxy
     docker run -d --name letsencrypt --restart=unless-stopped \
-    -v ''' + options['volumes_directory'] + '''/certs:/etc/nginx/certs:rw \
+    -v /volumes/certs:/etc/nginx/certs:rw \
     --label ident=true \
     --volumes-from nginx-proxy \
     -v /var/run/docker.sock:/var/run/docker.sock:ro \
@@ -92,7 +90,7 @@ def install_nginx(options):
 def install_mariadb(options):
     os.system('''
     docker run -d --name rancherdb --restart=always \
-    -v ''' + options['volumes_directory'] + '''/rancher-data:/var/lib/mysql \
+    -v /volumes/rancher-data:/var/lib/mysql \
     -e MYSQL_DATABASE=''' + options['rancher_mysql_database'] + ''' \
     -e MYSQL_ROOT_PASSWORD=''' + options['mysql_root_password'] + ''' \
     --label ident=true \
