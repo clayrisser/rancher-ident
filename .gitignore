@@ -11,5 +11,5 @@ dist
 get-pip.py
 
 # Build
-rancher-installer
-rancher-installer-*
+rancher-ident
+rancher-ident-*
