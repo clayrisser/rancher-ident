@@ -30,7 +30,7 @@ def get_defaults():
         'backup_storage_target_url': '',
         'backup_storage_access_key': '',
         'backup_storage_secret_key': '',
-        'cron_schedule': '0 0 0 * * *',
+        'cron_schedule': '0 0 * * *',
         'rancher_mysql_database': 'rancher',
         'mysql_root_password': 'hellodocker'
     }
