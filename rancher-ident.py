@@ -141,7 +141,7 @@ def install_ident(options):
     os.system('''
     docker run -d --name ident --restart=always \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    ''' + ('' if options['backup_storage_target_url'] == '' else '-v /backup:/borg') + ''' \
+    ''' + ('' if options['backup_storage_target_url'] == '' else '-v /backup:/backup') + ''' \
     -e STORAGE_ACCESS_KEY=''' + options['backup_storage_access_key'] + ''' \
     -e STORAGE_SECRET_KEY=''' + options['backup_storage_secret_key'] + ''' \
     -e STORAGE_TARGET_URL=''' + options['backup_storage_target_url'] + ''' \
