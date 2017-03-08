@@ -103,7 +103,7 @@ def restore_volumes(options):
     os.system('''
     docker run --rm \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v /mnt/orch-backup:/backup
+    -v /mnt/orch-backup:/backup \
     -e RESTORE_ALL=true \
     jamrizzi/ident:latest restore
     ''')
@@ -111,7 +111,7 @@ def restore_volumes(options):
 def install_ident(options):
     os.system('''
     docker run -d --name ident --restart=always \
-    -v /mnt/orch-backup:/backup
+    -v /mnt/orch-backup:/backup \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CRON_SCHEDULE="''' + options['cron_schedule'] + '''" \
     jamrizzi/ident:latest
