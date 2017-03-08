@@ -2,14 +2,3 @@
 \#*\#
 \#*
 *~
-
-# Python
-*.pyc
-*.spec
-build
-dist
-get-pip.py
-
-# Build
-rancher-ident
-rancher-ident-*
