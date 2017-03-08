@@ -25,7 +25,7 @@ def main():
 
     os.system('''
     curl -L https://bootstrap.pypa.io/get-pip.py | python2.7
-    git clone https://github.com/jamrizzi/beegfs-installer.git
+    git clone https://github.com/jamrizzi/rancher-ident.git
     pip install future
     ''')
 
