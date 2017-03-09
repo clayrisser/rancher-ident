@@ -25,7 +25,7 @@ def get_defaults():
         'email': 'email@example.com',
         'rancher_domain': 'cloud.yourdomain.com',
         'volumes_mount': 'local',
-        'backup_storage_mount': 'local',
+        'backup_volumes_mount': 'local',
         'cron_schedule': '0 0 * * *',
         'rancher_mysql_database': 'rancher',
         'mysql_root_password': 'hellodocker'
@@ -36,7 +36,7 @@ def gather_information(defaults):
     options['email'] = helper.default_prompt('Email', defaults['email'])
     options['rancher_domain'] = helper.default_prompt('Rancher Domain', defaults['rancher_domain'])
     options['volumes_mount'] = helper.default_prompt('Volumes Mount', defaults['volumes_mount'])
-    options['backup_storage_mount'] = helper.default_prompt('Backup Storage Mount', defaults['backup_storage_mount'])
+    options['backup_volumes_mount'] = helper.default_prompt('Backup Storage Mount', defaults['backup_volumes_mount'])
     options['cron_schedule'] = helper.default_prompt('Cron Schedule', defaults['cron_schedule'])
     options['rancher_mysql_database'] = helper.default_prompt('Rancher Mysql Database', defaults['rancher_mysql_database'])
     options['mysql_root_password'] = helper.default_prompt('MYSQL Root Password', defaults['mysql_root_password'])
@@ -46,7 +46,7 @@ def mount_volumes(options):
     helper.mount(options['volumes_mount'], '/mnt/volumes')
 
 def mount_backup_storage(options):
-    helper.mount(options['backup_storage_mount'], '/mnt/orch-backup')
+    helper.mount(options['backup_volumes_mount'], '/mnt/orch-backup')
 
 def install_docker():
     os.system('''
