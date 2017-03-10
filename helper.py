@@ -30,12 +30,13 @@ class Helper:
         if mount_from != 'local':
             if mount_from[:4] == '/dev':
                 os.system('''
-                echo "''' + mount_from + ' ' +  mount_to + ''' xfs defaults 1 2" | tee -a /etc/fstab
+                mkfs.xfs ''' + mount_from + '''
+                echo "''' + mount_from + ' ' +  mount_to + ''' xfs defaults 0 2" | tee -a /etc/fstab
                 mount -a && mount
                 ''')
             else:
                 os.system('''
-                echo "''' + mount_from + ' ' + mount_to + ''' nfs rsize=8192,wsize=8192,timeo=14,intr" | tee -a /etc/fstab
+                echo "''' + mount_from + ' ' + mount_to + ''' nfs auto 0 2" | tee -a /etc/fstab
                 mount -a && mount
                 ''')
 
