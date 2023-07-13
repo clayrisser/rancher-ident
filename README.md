@@ -1,5 +1,9 @@
 # rancher-ident
+
 Simple, persistent, and reliable, installer for rancher
+
+
+![](assets/rancher-ident.png)
 
 ## Installation
 ```
